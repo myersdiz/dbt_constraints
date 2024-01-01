@@ -34,3 +34,14 @@ dbt_constraints:
       threads: 1
       type: postgres
       user: postgres
+    databricks:
+      type: databricks
+      catalog: "{{ env_var('DATABRICKS_CATALOG') }}"
+      schema: "{{ env_var('DATABRICKS_SCHEMA') }}"
+      # The DBT_ENV_SECRET_ prefix prevents the variable being included in logs
+      host: "{{ env_var('DBT_ENV_SECRET_HOST') }}"
+      http_path: "{{ env_var('DBT_ENV_SECRET_HTTP_PATH') }}"
+      token: "{{ env_var('DBT_ENV_SECRET_TOKEN') }}"
+      threads: "{{ env_var('DATABRICKS_THREADS', '4') | as_number }}"
+      connect_retries: 5
+      connect_timeout: 4
