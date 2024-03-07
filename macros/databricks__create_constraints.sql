@@ -71,9 +71,9 @@
     {%- set existing_not_null_col = lookup_cache.not_null_col[table_relation] -%}
 
     {%- set columns_to_change = [] -%}
-    {%- for column_name in column_names if column_name not in existing_not_null_col -%}
-        {%- do columns_to_change.append(column_name) -%}
-        {%- do existing_not_null_col.append(column_name) -%}
+    {%- for column_name in column_names if column_name|upper not in existing_not_null_col -%}
+        {%- do columns_to_change.append(column_name|upper) -%}
+        {%- do existing_not_null_col.append(column_name|upper) -%}
     {%- endfor -%}
 
     {%- if columns_to_change|count > 0 -%}
