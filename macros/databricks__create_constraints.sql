@@ -119,7 +119,8 @@
     {%- set lookup_query -%}
         SELECT kcu.*
           FROM {{ table_relation.database }}.information_schema.key_column_usage kcu
-               INNER JOIN {{ table_relation.database }}.information_schema.table_constraints tc ON (tc.table_schema = kcu.table_schema
+               INNER JOIN {{ table_relation.database }}.information_schema.table_constraints tc ON (tc.constraint_name = kcu.constraint_name
+                                                                                                AND tc.table_schema = kcu.table_schema
                                                                                                 AND tc.table_name = kcu.table_name)
          WHERE upper(kcu.table_schema) = upper('{{table_relation.schema}}')
            AND upper(kcu.table_name) = upper('{{table_relation.identifier}}')
@@ -162,7 +163,8 @@
     {%- set lookup_query -%}
         SELECT kcu.*
           FROM {{ table_relation.database }}.information_schema.key_column_usage kcu
-               INNER JOIN {{ table_relation.database }}.information_schema.table_constraints tc ON (tc.table_schema = kcu.table_schema
+               INNER JOIN {{ table_relation.database }}.information_schema.table_constraints tc ON (tc.constraint_name = kcu.constraint_name
+                                                                                                AND tc.table_schema = kcu.table_schema
                                                                                                 AND tc.table_name = kcu.table_name)
          WHERE upper(kcu.table_schema) = upper('{{table_relation.schema}}')
            AND upper(kcu.table_name) = upper('{{table_relation.identifier}}')
