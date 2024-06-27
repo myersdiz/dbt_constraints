@@ -149,6 +149,8 @@
 {#- This macro is used in create macros to avoid duplicate FK constraints -#}
 
 {%- macro databricks__foreign_key_exists(table_relation, column_names, lookup_cache) -%}
+    {%- set constraint_name = (constraint_name or table_relation.identifier ~ "_" ~ column_names|join('_') ~ "_FK") | upper -%}
+
     {#- Check if we can find this constraint in the lookup cache -#}
     {%- if table_relation in lookup_cache.foreign_keys -%}
         {%- set cached_foreign_keys = lookup_cache.foreign_keys[table_relation] -%}
@@ -158,6 +160,18 @@
                 {{ return(true) }}
              {%- endif -%}
         {% endfor %}
+    {%- endif -%}
+
+    {%- set lookup_query -%}
+        SELECT 'FK exists' AS fk_exists
+          FROM {{ table_relation.database }}.information_schema.table_constraints
+         WHERE lower(constraint_name) = lower('{{constraint_name}}')
+           AND constraint_type = 'FOREIGN KEY'
+    {%- endset -%}
+    {%- set fk_list = run_query(lookup_query) -%}
+    {%- if fk_list.columns["fk_exists"].values() | count > 0 -%}
+        {%- do log("Found FK key: " ~ constraint_name, info=false) -%}
+        {{ return(true) }}
     {%- endif -%}
 
     {%- set lookup_query -%}
